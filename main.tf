@@ -49,7 +49,7 @@ resource "null_resource" "configure_cert_manager_vault_issuer" {
   depends_on = [null_resource.configure_cert_manager]
   provisioner "local-exec" {
     command = <<-EOT
-      token=$(echo "${var.vault_token}" | base64)
+      b64token=$(echo "$VAULT_TOKEN" | base64)
       cat <<EOF | ./kubectl apply -f -
       apiVersion: v1
       kind: Secret
@@ -58,7 +58,7 @@ resource "null_resource" "configure_cert_manager_vault_issuer" {
         name: cert-manager-vault-token
         namespace: cert-manager
       data:
-        token: $token
+        token: $b64token
       ---         
       apiVersion: cert-manager.io/v1
       kind: ClusterIssuer
@@ -67,7 +67,7 @@ resource "null_resource" "configure_cert_manager_vault_issuer" {
       spec:
         vault:
           path: ${var.vault_issuer_path}
-          server: ${var.vault_server}
+          server: $VAULT_ADDR
           caBundle: ${var.vault_tls_cert_ca}
           auth:
             tokenSecretRef:
