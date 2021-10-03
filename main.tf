@@ -1,14 +1,6 @@
 resource "null_resource" "setup_env" { 
   provisioner "local-exec" { 
     command = <<-EOT
-      # Add bins
-      wget https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz
-      tar -xzvf helm-v3.6.3-linux-amd64.tar.gz
-      mv linux-amd64/helm .
-      curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-      chmod +x kubectl
-      
-      # Create kubeconfig
       mkdir ~/.kube || echo "~/.kube already exists"
       echo "${var.aks_kubeconfig}" > ~/.kube/config
     EOT
@@ -19,15 +11,10 @@ resource "null_resource" "configure_cert_manager" {
   depends_on = [null_resource.setup_env]
   provisioner "local-exec" {
     command = <<-EOT
-      ./kubectl create namespace ${var.cert_manager_namespace}
-      ./kubectl create secret docker-registry artifactory-access \
-        --namespace ${var.cert_manager_namespace} \
-        --docker-server=${var.registry_server} \
-        --docker-username=${var.registry_username} \
-        --docker-password=${var.registry_password}
-      ./helm repo add jetstack https://charts.jetstack.io
-      ./helm repo update
-      ./helm install cert-manager jetstack/cert-manager \
+      kubectl create namespace ${var.cert_manager_namespace}
+      helm repo add jetstack https://charts.jetstack.io
+      helm repo update
+      helm install cert-manager jetstack/cert-manager \
         --namespace ${var.cert_manager_namespace} \
         --version ${var.cert_manager_version} \
         --set installCRDs=true \
@@ -50,7 +37,7 @@ resource "null_resource" "configure_cert_manager_vault_issuer" {
   provisioner "local-exec" {
     command = <<-EOT
       b64token=$(echo "$VAULT_TOKEN" | base64)
-      cat <<EOF | ./kubectl apply -f -
+      cat <<EOF | kubectl apply -f -
       apiVersion: v1
       kind: Secret
       type: Opaque
