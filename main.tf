@@ -14,7 +14,7 @@ resource "null_resource" "configure_cert_manager" {
       kubectl create namespace ${var.cert_manager_namespace}
       helm repo add jetstack https://charts.jetstack.io
       helm repo update
-      helm install cert-manager jetstack/cert-manager --namespace ${var.cert_manager_namespace} --values cert-manager-values.yaml --timeout 600
+      helm install cert-manager jetstack/cert-manager --namespace ${var.cert_manager_namespace} --values cert-manager-values.yaml --timeout 10m0s
     EOT
   }
 }
