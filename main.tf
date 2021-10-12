@@ -28,6 +28,7 @@ resource "null_resource" "configure_cert_manager" {
       stringData:
         token: ${var.vault_token}
       EOF
+      sleep 120
       cat <<EOF | kubectl apply -f -
       apiVersion: cert-manager.io/v1
       kind: ClusterIssuer
