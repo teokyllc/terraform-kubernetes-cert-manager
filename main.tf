@@ -34,7 +34,7 @@ resource "null_resource" "add_cert_manager_vault_role_secret" {
       metadata:
         name: cert-manager-vault-approle
         namespace: ${var.cert_manager_namespace}
-      data:
+      stringData:
         secretId: "${var.cert_manager_secret_id}"
       EOF
     EOT
