@@ -8,7 +8,7 @@ variable "cert_manager_namespace" {
     description = "The namespace cert-manager will be deployed to."
 }
 
-variable "vault_token" {
+variable "cert_manager_secret_id" {
     type = string
-    description = "The token used to access Vault."
+    description = "The secret id used in the Vault app role."
 }
