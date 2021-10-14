@@ -16,14 +16,14 @@ resource "null_resource" "configure_cert_manager" {
       helm repo update
       helm upgrade --install cert-manager jetstack/cert-manager \
         --namespace ${var.cert_manager_namespace} \
-        --values cert-manager-values.yaml \
+        --values https://raw.githubusercontent.com/teokyllc/terraform-kubernetes-cert-manager/main/values.yaml \
         --timeout 10m0s
       sleep 120
     EOT
   }
 }
 
-resource "null_resource" "add_cert_manager_vaulr_role_secret" {
+resource "null_resource" "add_cert_manager_vault_role_secret" {
   depends_on = [null_resource.configure_cert_manager]
   provisioner "local-exec" {
     command = <<-EOT
@@ -33,7 +33,7 @@ resource "null_resource" "add_cert_manager_vaulr_role_secret" {
       type: Opaque
       metadata:
         name: cert-manager-vault-approle
-        namespace: cert-manager
+        namespace: ${var.cert_manager_namespace}
       data:
         secretId: "${var.cert_manager_secret_id}"
       EOF
