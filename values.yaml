@@ -19,7 +19,6 @@ serviceAccount:
   automountServiceAccountToken: true
 securityContext:
   runAsNonRoot: true
-nodeSelector: {}
 prometheus:
   enabled: true
   servicemonitor:
@@ -59,7 +58,7 @@ webhook:
 cainjector:
   enabled: true
 startupapicheck:
-  enabled: false
+  enabled: true
   securityContext:
     runAsNonRoot: true
   timeout: 1m
