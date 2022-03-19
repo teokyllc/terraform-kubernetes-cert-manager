@@ -7,7 +7,7 @@ resource "kubernetes_namespace" "cert_manager_ns" {
 resource "helm_release" "cert_manager" {
   name       = "cert-manager"
   repository = "https://charts.jetstack.io"
-  chart      = "jetstack/cert-manager"
+  chart      = "cert-manager"
   namespace  = var.cert_manager_namespace
   values     = [
     "${file(var.values_filename)}"
