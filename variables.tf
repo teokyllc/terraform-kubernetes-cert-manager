@@ -1,3 +1,8 @@
+variable "values_filename" {
+    type = string
+    description = "The filename for values.yaml."
+}
+
 variable "cert_manager_namespace" {
     type = string
     description = "The namespace cert-manager will be deployed to."
