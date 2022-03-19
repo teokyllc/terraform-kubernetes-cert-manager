@@ -1,23 +1,23 @@
 # terraform-kubernetes-cert-manager
-A Terraform module to deploy cert-manager into Kubernetes cluster using a helm chart.  This module will also configure a Kubernetes secret to hold the <b>SecretId</b> on the AppRole used by the issuer which gets created as well.
+A Terraform module to deploy cert-manager into Kubernetes cluster using a helm chart.  This module can also configure a Hashicorp Vault certificate issuer.
 
 
 ## Using this module
 Example of using this module.<br><br>
 <b>main.tf</b> <br>
 ```
-module "cert_manager" {
-  depends_on             = [module.aks]
-  source                 = "github.com/teokyllc/terraform-kubernetes-cert-manager"
-  kubeconfig             = module.aks.aks_kubeconfig
+module "cert-manager" {
+  source                 = "app.terraform.io/ANET/cert-manager/kubernetes"
+  version                = "1.0.4"
   cert_manager_namespace = "cert-manager"
-  cert_manager_secret_id = var.cert_manager_secret_id
+  values_filename        = "cert-manager-values.yaml"
+  enable_vault_issuer    = false
 }
 ```
 <br><br>
 
 ## Getting the App Role Secret Id
-This module creates a Kubernetes secret with the Secret Id for the Vault role used by the cert-manager issuer.  The following command generates a new Secret Id.<br>
+This module can create a Kubernetes secret with the Secret Id for the Vault role used by the cert-manager issuer.  The following command generates a new Secret Id on the Vault.<br>
 ```
 vault write -force auth/approle/role/approle-cert-manager/secret-id
 ```
