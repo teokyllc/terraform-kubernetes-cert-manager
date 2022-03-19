@@ -8,7 +8,7 @@ resource "helm_release" "cert_manager" {
   name       = "cert-manager"
   repository = "https://charts.jetstack.io"
   chart      = "jetstack/cert-manager"
-  namespace  = var.actions_runner_namespace
+  namespace  = var.cert_manager_namespace
   values     = [
     "${file("values.yaml")}"
   ]
