@@ -10,7 +10,7 @@ resource "helm_release" "cert_manager" {
   chart      = "cert-manager"
   namespace  = var.cert_manager_namespace
   values     = [
-    "${file(var.values_filename)}"
+    "${file(var.cert_manager_values_filename)}"
   ]
 }
 

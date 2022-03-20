@@ -1,4 +1,4 @@
-variable "values_filename" {
+variable "cert_manager_values_filename" {
     type = string
     description = "The filename for values.yaml."
 }
