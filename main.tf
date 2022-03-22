@@ -26,9 +26,17 @@ resource "kubernetes_secret" "vault_role_secret" {
   type = "Opaque"
 }
 
+resource "null_resource" "wait_for_service" {
+  depends_on = [helm_release.cert_manager]
+  provisioner "local-exec" {
+      command = "sleep 120"
+  }
+}
+
 resource "kubernetes_manifest" "vault_issuer" {
-  count    = "${var.enable_vault_issuer == true ? 1 : 0}"
-  manifest = {
+  depends_on = [null_resource.wait_for_service]
+  count      = "${var.enable_vault_issuer == true ? 1 : 0}"
+  manifest   = {
     "apiVersion" = "cert-manager.io/v1"
     "kind" = "ClusterIssuer"
     "metadata" = {
@@ -52,12 +60,5 @@ resource "kubernetes_manifest" "vault_issuer" {
         "server" = "${var.vault_server}"
       }
     }
-  }
-}
-
-resource "null_resource" "wait_For_webhook_service" {
-  depends_on = [helm_release.cert_manager]
-  provisioner "local-exec" {
-      command = "sleep 180"
   }
 }
