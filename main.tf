@@ -58,6 +58,6 @@ resource "kubernetes_manifest" "vault_issuer" {
 resource "null_resource" "wait_For_webhook_service" {
   depends_on = [helm_release.cert_manager]
   provisioner "local-exec" {
-      command = "sleep 120"
+      command = "sleep 180"
   }
 }
