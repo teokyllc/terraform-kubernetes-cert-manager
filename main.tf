@@ -29,7 +29,7 @@ resource "kubernetes_secret" "vault_role_secret" {
 resource "null_resource" "wait_for_service" {
   depends_on = [helm_release.cert_manager]
   provisioner "local-exec" {
-      command = "sleep 120"
+      command = "sleep 90"
   }
 }
 
