@@ -75,7 +75,7 @@ resource "helm_release" "cert_manager" {
 
   set {
     name  = "serviceAccount.annotations.\\eks\\.amazonaws\\.com/role-arn"
-    value = aws_iam_role.cert_manager_role.arn
+    value = aws_iam_role.cert_manager_role[0].arn
   }
 }
 
