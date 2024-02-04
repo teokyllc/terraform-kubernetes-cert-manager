@@ -79,9 +79,8 @@ resource "helm_release" "cert_manager" {
   }
 }
 
-resource "kubernetes_manifest" "clusterissuer" {
-  count      = length(var.cluster_issuer_names)
-  depends_on = [helm_release.cert_manager]
+resource "kubernetes_manifest" "r53_cluster_issuer" {
+  count    = length(var.cluster_issuer_names)
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
     "kind" = "ClusterIssuer"
@@ -106,6 +105,23 @@ resource "kubernetes_manifest" "clusterissuer" {
           },
         ]
       }
+    }
+  }
+  field_manager {
+    force_conflicts = true
+  }
+}
+
+resource "kubernetes_manifest" "self_signed_cluster_issuer" {
+  count    = var.create_self_signed_cluster_issuer ? 1 : 0
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind" = "ClusterIssuer"
+    "metadata" = {
+      "name" = var.self_signed_cluster_issuer_name
+    }
+    "spec" = {
+      "selfSigned" = {}
     }
   }
   field_manager {

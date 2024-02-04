@@ -57,3 +57,15 @@ variable "eks_iodc_hash" {
   description = "The Open ID Connect hash from the EKS cluster."
   default     = null
 }
+
+variable "create_self_signed_cluster_issuer" {
+  type        = bool
+  description = "Creates a cert-manager self-signed ClusterIssuer."
+  default     = false
+}
+
+variable "self_signed_cluster_issuer_name" {
+  type        = string
+  description = "A name for the self-signed ClisterIssuer."
+  default     = null
+}
