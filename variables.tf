@@ -1,3 +1,9 @@
+variable "enable_cert_manager" {
+  type        = bool
+  description = "If enabled, cert-manager Helm chart and IAM role will be deployed."
+  default     = false
+}
+
 variable "cert_manager_version" {
   type        = string
   description = "The version of cert-manager to deploy."
@@ -43,12 +49,6 @@ variable "cert_manager_role_name" {
 variable "cert_manager_policy_name" {
   type        = string
   description = "The name for the IAM policy for cert-manager."
-  default     = null
-}
-
-variable "cert_manager_policy_description" {
-  type        = string
-  description = "The description for the IAM policy for cert-manager."
   default     = null
 }
 

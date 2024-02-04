@@ -1,18 +1,20 @@
 resource "aws_iam_role" "cert_manager_role" {
+  count              = var.enable_cert_manager ? 1 : 0
   name               = var.cert_manager_role_name
+  description        = "IAM role for cert-manager Kubernetes service account."
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Sid = ""
+        Sid = "AllowCertManagerServiceAccount"
         Effect = "Allow"
         Principal = {
-          Federated = "arn:aws:iam::621672204142:oidc-provider/oidc.eks.us-east-2.amazonaws.com/id/${var.eks_iodc_hash}"
+          Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/oidc.eks.${var.aws_region}.amazonaws.com/id/${var.eks_iodc_hash}"
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
           StringEquals = {
-            "oidc.eks.us-east-2.amazonaws.com/id/${var.eks_iodc_hash}:sub" = "system:serviceaccount:${var.cert_manager_namespace}:cert-manager"
+            "oidc.eks.${var.aws_region}.amazonaws.com/id/${var.eks_iodc_hash}:sub" = "system:serviceaccount:${var.cert_manager_namespace}:cert-manager"
           }
         }
       }
@@ -21,9 +23,10 @@ resource "aws_iam_role" "cert_manager_role" {
 }
 
 resource "aws_iam_policy" "cert_manager_policy" {
+  count       = var.enable_cert_manager ? 1 : 0
   name        = var.cert_manager_policy_name
   path        = "/"
-  description = var.cert_manager_policy_description
+  description = "Allows creating records for automated challenges."
   policy      = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -50,11 +53,13 @@ resource "aws_iam_policy" "cert_manager_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "cert_manager_policy_attachment" {
-  role       = aws_iam_role.cert_manager_role.name
-  policy_arn = aws_iam_policy.cert_manager_policy.arn
+  count      = var.enable_cert_manager ? 1 : 0
+  role       = aws_iam_role.cert_manager_role[0].name
+  policy_arn = aws_iam_policy.cert_manager_policy[0].arn
 }
 
 resource "helm_release" "cert_manager" {
+  count            = var.enable_cert_manager ? 1 : 0
   name             = "cert-manager"
   repository       = "https://charts.jetstack.io"
   chart            = "cert-manager"
