@@ -37,7 +37,7 @@ variable "letsencrypt_issuer_email" {
 variable "cluster_issuer_names" {
   type        = list(any)
   description = "The name for the ClusterIssuer."
-  default     = null
+  default     = []
 }
 
 variable "cert_manager_role_name" {
